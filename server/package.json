@@ -1,0 +1,24 @@
+{
+  "name": "carsphere-gql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "tsc",
+    "start": "npm run compile && node ./dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@apollo/server": "^4.10.4",
+    "graphql": "^16.8.1",
+    "mongoose": "^8.4.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/introspection": "4.0.3",
+    "@types/node": "^20.12.13",
+    "typescript": "^5.4.5"
+  }
+}

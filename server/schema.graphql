@@ -1,0 +1,88 @@
+type Query {
+  cars: [Car]
+}
+
+type Car {
+  id: ID
+  reg_number: String
+  make: String
+  model: String
+  year: Int
+  color: String
+  milage: Int
+  price: Int
+  fueltype: String
+  transmission: String
+  engine_capacity: String
+  engine_type: String
+  horsepower: Int
+  torque: String
+  insurance_group: String
+  previous_owners: Int
+  features: [Feature]
+  pictures: [Picture]
+  ulez_compatible: Boolean
+  zero_to_sixty: String
+  top_speed: Int
+  doors: Int
+  euro_emission: String
+  mpg_city: Int
+  mpg_highway: Int
+  mpg_combined: Int
+  seats: Int
+  weight: Int
+  listed_at: String
+}
+
+type Mutation {
+  createCar(
+    reg_number: String
+    make: String
+    model: String
+    year: Int
+    color: String
+    milage: Int
+    price: Int
+    fueltype: String
+    transmission: String
+    engine_capacity: String
+    engine_type: String
+    horsepower: Int
+    torque: String
+    insurance_group: String
+    previous_owners: Int
+    features: [FeatureInput]
+    pictures: [PictureInput]
+    ulez_compatible: Boolean
+    zero_to_sixty: String
+    top_speed: Int
+    doors: Int
+    euro_emission: String
+    mpg_city: Int
+    mpg_highway: Int
+    mpg_combined: Int
+    seats: Int
+    weight: Int
+    listed_at: String
+  ): Car
+}
+
+input FeatureInput {
+  name: String
+  description: String
+}
+
+input PictureInput {
+  url: String
+  description: String
+}
+
+type Feature {
+  name: String
+  description: String
+}
+
+type Picture {
+  url: String
+  description: String
+}
