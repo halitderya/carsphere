@@ -1,11 +1,12 @@
 {
-  "name": "carsphere-gql",
+  "name": "carsphere-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "compile": "tsc",
-    "start": "npm run compile && node ./dist/index.js"
+    "start": "npm run compile && node ./dist/index.js",
+    "dev": "nodemon --watch 'src/*.ts' --watch 'schema.graphql' --exec 'npm run compile && node ./dist/index.js'"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@graphql-codegen/introspection": "4.0.3",
     "@types/node": "^20.12.13",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "nodemon": "^2.0.7"
   }
 }

@@ -1,15 +1,12 @@
 {
-  "name": "carsphere",
+  "name": "carsphere-client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "dev:nodemon": "nodemon --watch pages --watch components --exec \"next dev\""
-
-    
+    "lint": "next lint"
   },
   "dependencies": {
     "@apollo/client": "^3.10.4",
@@ -24,7 +21,6 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
-    "nodemon": "^3.1.2",
     "typescript": "^5"
   }
 }
