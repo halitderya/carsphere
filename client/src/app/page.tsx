@@ -1,3 +1,3 @@
 export default function Index() {
-  return <h2>Main Page Where we will serve as front page</h2>;
+  return <h2>Main Page Where we wilfl hop hop dafs front fpage</h2>;
 }

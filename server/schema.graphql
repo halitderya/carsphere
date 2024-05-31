@@ -14,11 +14,11 @@ type Car {
   fueltype: String
   transmission: String
   engine_capacity: String
-  engine_type: String
+  engine_typ: String
   horsepower: Int
   torque: String
   insurance_group: String
-  previous_owners: Int
+  previous_owner: Int
   features: [Feature]
   pictures: [Picture]
   ulez_compatible: Boolean
