@@ -7,6 +7,7 @@ import { Car } from "./db/models.js";
 const resolvers = {
     Query: {
         cars: async () => await Car.find({}),
+        carbyreg: async (_, { reg_number }) => await Car.findOne({ reg_number: { $regex: reg_number, $options: "i" } }),
     },
     Mutation: {
         createCar: async (_, args) => {

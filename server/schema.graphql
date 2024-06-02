@@ -1,5 +1,6 @@
 type Query {
   cars: [Car]
+  carbyreg(reg_number: String): Car
 }
 
 type Car {
@@ -14,7 +15,7 @@ type Car {
   fueltype: String
   transmission: String
   engine_capacity: String
-  engine_typ: String
+  engine_type: String
   horsepower: Int
   torque: String
   insurance_group: String
