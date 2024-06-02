@@ -20,5 +20,5 @@ await server.start();
 app.use("/graphql", cors(), express.json(), expressMiddleware(server, {
     context: async ({ req }) => ({ token: req.headers.token }),
 }));
-await new Promise((resolve) => httpServer.listen({ port: 40001 }, resolve));
-console.log(`🚀 Server ready hoop at http://loccalhosdfgt:4000`);
+await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
+console.log(`🚀 Server ready halit at http://loccalhosdfgt:4000`);
