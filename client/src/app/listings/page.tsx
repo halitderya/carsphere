@@ -8,6 +8,7 @@ export default function Index() {
         make
         engine_type
         euro_emission
+        reg_number
       }
     }
   `;
@@ -25,13 +26,16 @@ export default function Index() {
           make,
           engine_type,
           euro_emission,
+          reg_number,
         }: {
           id: number;
           make: string;
           engine_type: string;
           euro_emission: string;
+          reg_number: string;
         }) => (
           <div key={id}>
+            <a href={`/listings/cardetails/${reg_number}`}>{reg_number}</a>
             <h3>{engine_type}</h3>
             <h3>{make}</h3>
             <h3>{euro_emission}</h3>
