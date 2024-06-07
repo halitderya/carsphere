@@ -1,0 +1,23 @@
+.hamburger{
+
+display: flex;
+flex-direction: column;
+    height: auto;
+    width:  15%;
+    box-sizing: border-box;
+    align-items: center;
+    @media (min-width:500px) {
+        display: none;
+        
+    }
+    .lane{
+        
+        border-bottom: 2px solid black;
+        width: 80%;
+        margin-top: 20%;
+    
+        
+    }
+  
+}
+

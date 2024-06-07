@@ -1,0 +1,40 @@
+.filtermenu{
+
+
+
+
+    background-color: wheat;
+    display: flex;
+    position:fixed;
+width: 30lvw;
+    flex-direction: column;
+    justify-content:space-between;
+    align-items:start;
+    transition: transform 0.3s ease-in-out;
+    @media (max-width:500px){
+        top: 0;
+        left: 0;
+        width: 100lvw;
+        height: 100lvh;
+        z-index: 50;
+        position: fixed;
+        display: flex;
+        background-color: aqua;
+    }
+    @media (min-width:500px){
+
+        display: flex;
+        background-color: red;
+        position: relative;
+       // position: fixed;;
+        
+   .closefilter{
+        display: block;
+        @media (min-width:500px){
+            display: none;
+        }
+    }
+    }
+ 
+    
+}

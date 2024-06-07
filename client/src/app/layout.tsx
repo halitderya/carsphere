@@ -1,5 +1,7 @@
 import React from "react";
 import { Providers } from "./provider";
+import "../scss/main.scss";
+import Header from "@/components/layout/header";
 export default function RootLayout({
   children,
 }: {
@@ -8,10 +10,7 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <h1>Root Layout</h1>
-        <h2>Here is the header</h2>
         <Providers>{children}</Providers>
-        <h2>Here is the footer</h2>
       </body>
     </html>
   );

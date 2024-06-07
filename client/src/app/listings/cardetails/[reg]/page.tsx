@@ -1,5 +1,7 @@
 "use client";
 import { gql, useQuery } from "@apollo/client";
+import Notfound from "../../../not-found";
+import { redirect } from "next/navigation";
 
 export default function Page({ params }: { params: { reg: string } }) {
   const GET_CARS = gql`
@@ -28,6 +30,6 @@ export default function Page({ params }: { params: { reg: string } }) {
       </div>
     );
   else {
-    return <p>Car Not found with Reg: {params.reg}</p>;
+    redirect("/not-found");
   }
 }

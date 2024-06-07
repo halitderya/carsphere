@@ -1,5 +1,4 @@
 {
-  "/listings/cardetails/[reg]/page": "app/listings/cardetails/[reg]/page.js",
-  "/listings/page": "app/listings/page.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js"
 }

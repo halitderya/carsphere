@@ -1,6 +1,29 @@
 type Query {
   cars: [Car]
   carbyreg(reg_number: String): Car
+  totalcars: Int
+  filteredCars(
+    make: String
+    model: String
+    year_min: Int
+    year_max: Int
+    color: String
+    milage_min: Int
+    milage_max: Int
+    fueltype: String
+    transmission: Transmission
+    engine_capacity_min: Int
+    engine_capacity_max: Int
+    engine_type: String
+    horsepower_min: Int
+    horsepower_max: Int
+    insurance_group: String
+    previous_owner_min: Int
+    previous_owner_max: Int
+    ulez_compatible: Boolean
+    doors: Int
+    seats: Int
+  ): [Car]
 }
 
 type Car {
@@ -13,8 +36,8 @@ type Car {
   milage: Int
   price: Int
   fueltype: String
-  transmission: String
-  engine_capacity: String
+  transmission: Transmission
+  engine_capacity: Int
   engine_type: String
   horsepower: Int
   torque: String
@@ -78,6 +101,10 @@ input PictureInput {
   description: String
 }
 
+input MakeInput {
+  name: String
+  description: String
+}
 type Feature {
   name: String
   description: String
@@ -86,4 +113,10 @@ type Feature {
 type Picture {
   url: String
   description: String
+}
+enum Transmission {
+  Automatic
+  Semi_Automatic
+
+  Manual
 }
