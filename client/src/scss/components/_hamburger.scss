@@ -1,13 +1,13 @@
 .hamburger{
 
-display: flex;
+display: none;
 flex-direction: column;
     height: auto;
     width:  15%;
     box-sizing: border-box;
     align-items: center;
-    @media (min-width:500px) {
-        display: none;
+    @media (max-width:500px) {
+        display: flex;
         
     }
     .lane{
