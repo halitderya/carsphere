@@ -1,20 +1,12 @@
 import { SyntheticEvent } from "react";
-
-type IcarCardData = {
-  make: string;
-  model: string;
-  fueltype: string;
-  milage: string;
-  ulez: boolean;
-  featurelist: string[];
-};
+import ICarCard from "@/types/carCardType";
 
 export default function CarCard({
   onClick,
   carData,
 }: {
   onClick?: (e: SyntheticEvent) => void;
-  carData: IcarCardData;
+  carData: ICarCard;
 }) {
   return (
     <div onClick={onClick}>
@@ -22,6 +14,7 @@ export default function CarCard({
       <div>{carData.model}</div>
       <div>{carData.milage}</div>
       <div>{carData.fueltype}</div>
+      <div>{carData.transmission}</div>
       <div>{carData.ulez ? "ULEZ Compliant" : "Not ULEZ Compliant"}</div>
       <span>
         <h4>Features:</h4>

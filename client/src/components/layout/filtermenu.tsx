@@ -20,10 +20,11 @@ export default function FilterMenu({
       setParams(params);
     }
   }
-  if (active)
-    return (
-      <div className="filtermenu">
-        <div>Filter MENU</div>
+  // if (active)
+  return (
+    <div className={`filtermenu ${active ? "open" : ""}`}>
+      <div className="filtermenuheader">
+        <div>Find your dream car:</div>
 
         <div
           className="closefilter"
@@ -33,8 +34,10 @@ export default function FilterMenu({
         >
           {"Close"}
         </div>
+      </div>
 
-        <select id="Make" onChange={handlefilterchange}>
+      <div className="options">
+        <select id="make" onChange={handlefilterchange}>
           <option value="" hidden defaultValue="">
             Make
           </option>
@@ -43,17 +46,18 @@ export default function FilterMenu({
           <option value="Mercedes">Mercedes</option>
         </select>
 
-        <select id="Transmission" onChange={handlefilterchange}>
+        <select id="transmission" onChange={handlefilterchange}>
           <option value="" hidden defaultValue="">
             Transmission
           </option>
-          <option value="AUTOMATIC">Automatic</option>
-          <option value="SEMI_AUTOMATIC">Semi Automatic</option>
-          <option value="MANUAL">Manual</option>
+          <option value="Automatic">Automatic</option>
+          <option value="Semi_Automatic">Semi Automatic</option>
+          <option value="Manual">Manual</option>
         </select>
       </div>
-    );
-  else {
-    return null;
-  }
+    </div>
+  );
+  // else {
+  //   return null;
+  // }
 }

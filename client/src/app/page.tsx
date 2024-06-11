@@ -3,8 +3,9 @@ import Header from "@/components/layout/header";
 import FilterMenu from "@/components/layout/filtermenu";
 import CarCard from "@/components/essentials/carCard";
 import Footer from "@/components/layout/footer";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import { useEffect, useState } from "react";
+import ICarCard from "@/types/carCardType";
 
 export default function Index() {
   const CAR_COUNT = gql`
@@ -39,21 +40,21 @@ export default function Index() {
       }
     }
   `;
-  //const { loading, error, data } = useQuery(CAR_COUNT);
-  const { loading, error, data } = useQuery(FILTER_CARS);
+  const [params, setParams] = useState<{}>({});
+
+  const [getCars, { loading, error, data }] = useLazyQuery(FILTER_CARS, {
+    //fetchPolicy: "network-only", // Doesn't check cache before making a network request
+
+    variables: { ...params },
+  });
   const [active, setActive] = useState<boolean>(true);
 
-  const [params, setParams] = useState<{}>({});
   useEffect(() => {
-    console.log(params);
-    console.log(data);
-    if (data) {
-      console.log("data dolu");
+    console.log("params:", params);
 
-      if (data.filteredCars) {
-        console.log(data.filteredCars);
-      }
-    }
+    getCars({ variables: { ...params } }).then((x) => {
+      console.log("refetch: ", x.data);
+    });
   }, [params]);
   function handleCardClicked(e: any) {
     console.log("carcardclicked", e);
@@ -64,6 +65,8 @@ export default function Index() {
         <Header active={active} setActive={setActive} />
         <div className="maindiv">
           <div className="leftcolumn">
+            {" "}
+            {/* Left Column */}
             <FilterMenu
               setParams={setParams}
               params={params}
@@ -83,17 +86,10 @@ export default function Index() {
                 <p>Loading...</p>
               ) : data ? (
                 data.filteredCars.length > 0 ? (
-                  data.filteredCars.map((car: any, index: number) => (
+                  data.filteredCars.map((car: ICarCard, index: number) => (
                     <div key={index}>
                       <CarCard
-                        carData={{
-                          make: car.make,
-                          model: car.model,
-                          fueltype: car.fueltype,
-                          milage: car.milage,
-                          ulez: car.ulez,
-                          featurelist: car.featurelist,
-                        }}
+                        carData={car}
                         onClick={handleCardClicked}
                       ></CarCard>
                     </div>

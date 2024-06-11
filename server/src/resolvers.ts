@@ -11,6 +11,7 @@ enum Transmission {
   Manual = "Manual",
 }
 
+const stringregex = new RegExp("/^[a-zA-Z0-9]+$/");
 const resolvers = {
   Query: {
     cars: async () => await Car.find({}),
@@ -68,14 +69,15 @@ const resolvers = {
     ) => {
       let query: any = {};
 
-      if (make) query.make = make;
-      if (model) query.model = model;
+      if (make) query.make = { $regex: new RegExp(make, "i") };
+      if (model) query.model = { $regex: new RegExp(model, "i") };
       if (year) query.year = year;
-      if (fueltype) query.fueltype = fueltype;
+      if (fueltype) query.fueltype = { $regex: new RegExp(fueltype, "i") };
       if (color) query.color = color;
       if (milage_min) query.milage = { $gte: milage_min };
       if (milage_max) query.milage = { $lte: milage_max };
-      if (transmission) query.transmission = transmission;
+      if (transmission)
+        query.transmission = { $regex: new RegExp(transmission, "i") };
       if (engine_capacity_min)
         query.engine_capacity = {
           ...query.engine_capacity,
