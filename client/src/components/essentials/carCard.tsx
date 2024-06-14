@@ -15,7 +15,10 @@ export default function CarCard({
       <div>{carData.milage}</div>
       <div>{carData.fueltype}</div>
       <div>{carData.transmission}</div>
-      <div>{carData.ulez ? "ULEZ Compliant" : "Not ULEZ Compliant"}</div>
+      <div>{carData.color}</div>
+      <div>
+        {carData.ulez_compatible ? "ULEZ Compliant" : "Not ULEZ Compliant"}
+      </div>
       <span>
         <h4>Features:</h4>
         {/* {carData ||
