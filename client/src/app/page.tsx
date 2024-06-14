@@ -4,47 +4,15 @@ import FilterMenu from "@/components/layout/filtermenu";
 import CarCard from "@/components/essentials/carCard";
 import Footer from "@/components/layout/footer";
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import ICarCard from "@/types/carCardType";
+import { FILTER_CARS } from "@/graphql/filter_cars";
 
 export default function Index() {
-  const CAR_COUNT = gql`
-    query totalcars {
-      totalcars
-    }
-  `;
-
-  const FILTER_CARS = gql`
-    query FilteredCars(
-      $make: String
-      $model: String
-      $transmission: Transmission
-      $milageMax: Int
-      $milageMin: Int
-      $color: String
-    ) {
-      filteredCars(
-        make: $make
-        model: $model
-
-        transmission: $transmission
-        milage_max: $milageMax
-        milage_min: $milageMin
-        color: $color
-      ) {
-        make
-        model
-        fueltype
-        milage
-        transmission
-      }
-    }
-  `;
   const [params, setParams] = useState<{}>({});
 
+  const [totalcars, setTotalCars] = useState<string>("");
   const [getCars, { loading, error, data }] = useLazyQuery(FILTER_CARS, {
-    //fetchPolicy: "network-only", // Doesn't check cache before making a network request
-
     variables: { ...params },
   });
   const [active, setActive] = useState<boolean>(true);
@@ -53,19 +21,23 @@ export default function Index() {
     console.log("params:", params);
 
     getCars({ variables: { ...params } }).then((x) => {
-      console.log("refetch: ", x.data);
+      totalcars === "" && setTotalCars(x.data.filteredCars.length);
     });
   }, [params]);
-  function handleCardClicked(e: any) {
-    console.log("carcardclicked", e);
-  }
+  function handleCardClicked(e: any) {}
   return (
     <div className="greatparent">
       <div className="mainwrapper">
         <Header active={active} setActive={setActive} />
         <div className="maindiv">
           <div className="leftcolumn">
-            {" "}
+            <a
+              onClick={() => {
+                setParams([]);
+              }}
+            >
+              Reset
+            </a>{" "}
             {/* Left Column */}
             <FilterMenu
               setParams={setParams}
@@ -79,28 +51,30 @@ export default function Index() {
             ipsum dolor sit amet consectetur, adipisicing elit. Odio, doloribus.
             Lorem ipsum dolor sit amet.
             <h2>
-              Number of Cars: <a href="/listings">{}</a>{" "}
+              Total number:{totalcars} <a href="/listings"></a>{" "}
             </h2>
-            <h3>
+            <div className="carcardscontainer">
               {loading ? (
                 <p>Loading...</p>
               ) : data ? (
                 data.filteredCars.length > 0 ? (
-                  data.filteredCars.map((car: ICarCard, index: number) => (
-                    <div key={index}>
-                      <CarCard
-                        carData={car}
-                        onClick={handleCardClicked}
-                      ></CarCard>
-                    </div>
-                  ))
+                  (data.filteredCars as ICarCard[]).map(
+                    (car: ICarCard, index: number) => (
+                      <div className="carcard" key={index}>
+                        <CarCard
+                          carData={car}
+                          onClick={handleCardClicked}
+                        ></CarCard>
+                      </div>
+                    )
+                  )
                 ) : (
                   <p>No cars available.</p>
                 )
               ) : (
                 <p>No data...</p>
               )}
-            </h3>
+            </div>
           </div>
           <div className="rightcolumn"> Right Column</div>
         </div>{" "}
