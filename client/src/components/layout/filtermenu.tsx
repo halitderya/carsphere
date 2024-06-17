@@ -47,7 +47,17 @@ export default function FilterMenu({
   const [uniqueMakes, setUniqueMakes] = useState<string[]>([]);
   const [allCars, setAllCars] = useState<[]>([]);
   const [selectedMake, setSelectedMake] = useState<string>("");
+  const [uniqueTransmission, setUniqueTransmission] = useState<string[]>([]);
+  const [uniqueFuelType, setUniqueFuelType] = useState<string[]>([]);
 
+  useEffect(() => {
+    setUniqueTransmission([
+      ...new Set(allCars.map((car: ICarCard) => car.transmission)),
+    ]);
+    setUniqueFuelType([
+      ...new Set(allCars.map((car: ICarCard) => car.fueltype)),
+    ]);
+  }, [uniqueTransmission, uniqueFuelType]);
   useEffect(() => {
     getCars({ variables: { ...params } }).then((x) => {
       if (x.data && x.data.filteredCars) {
@@ -67,7 +77,6 @@ export default function FilterMenu({
     });
   }, []);
 
-  useEffect(() => {});
   return (
     <div className={`filtermenu ${active ? "open" : ""}`}>
       <div className="filtermenuheader">
@@ -156,72 +165,43 @@ export default function FilterMenu({
             );
           })}
         </select>
-        <select id="transmission" onChange={handlefilterchange}>
-          <option value={""}>All</option>
-          {[
-            ...new Set(
-              allCars
-                .filter((item: ICarCard) => {
-                  return Object.keys(params).every(
-                    (key) =>
-                      params[key as keyof ICarCard] === undefined ||
-                      item[key as keyof ICarCard] ===
-                        params[key as keyof ICarCard]
-                  );
-                })
-                .map((item: ICarCard) => item.transmission)
-            ),
-          ].map((transmission) => {
-            const count = allCars.filter((item: ICarCard) => {
-              return (
-                Object.keys(params).every(
-                  (key) =>
-                    params[key as keyof ICarCard] === undefined ||
-                    item[key as keyof ICarCard] ===
-                      params[key as keyof ICarCard]
-                ) && item.transmission === transmission
-              );
-            }).length;
-            return (
-              <option key={transmission} value={transmission}>
-                {transmission} ({count})
-              </option>
-            );
-          })}
-        </select>
-        <select id="fueltype" onChange={handlefilterchange}>
-          <option value={""}>All</option>
-          {[
-            ...new Set(
-              allCars
-                .filter((item: ICarCard) => {
-                  return Object.keys(params).every(
-                    (key) =>
-                      params[key as keyof ICarCard] === undefined ||
-                      item[key as keyof ICarCard] ===
-                        params[key as keyof ICarCard]
-                  );
-                })
-                .map((item: ICarCard) => item.fueltype)
-            ),
-          ].map((fueltype) => {
-            const count = allCars.filter((item: ICarCard) => {
-              return (
-                Object.keys(params).every(
-                  (key) =>
-                    params[key as keyof ICarCard] === undefined ||
-                    item[key as keyof ICarCard] ===
-                      params[key as keyof ICarCard]
-                ) && item.fueltype === fueltype
-              );
-            }).length;
-            return (
-              <option key={fueltype} value={fueltype}>
-                {fueltype} ({count})
-              </option>
-            );
-          })}
-        </select>
+        <div>
+          <h4>Transmission</h4>
+          {uniqueTransmission.map((tr) => (
+            <div>
+              <label htmlFor={tr}>
+                {tr}
+                {""} (
+                {allCars.filter((s: ICarCard) => s.transmission === tr).length})
+              </label>
+              <input
+                id="transmission"
+                onChange={handlefilterchange}
+                type="checkbox"
+                value={tr}
+              />
+            </div>
+          ))}
+        </div>
+        <div>
+          {" "}
+          <h4>Fuel Type</h4>
+          {uniqueFuelType.map((uf) => (
+            <div>
+              <label htmlFor={uf}>
+                {uf}
+                {""} (
+                {allCars.filter((s: ICarCard) => s.fueltype === uf).length})
+              </label>
+              <input
+                id="fueltype"
+                onChange={handlefilterchange}
+                type="checkbox"
+                value={uf}
+              />
+            </div>
+          ))}
+        </div>
         <select id="color" onChange={handlefilterchange}>
           <option value={""}>All</option>
           {[
