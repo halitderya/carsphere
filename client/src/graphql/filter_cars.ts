@@ -1,13 +1,13 @@
 import gql from "graphql-tag";
-export const FILTER_CARS = gql`
+export const FilteredCars = gql`
   query FilteredCars(
     $make: String
     $model: String
-    $fueltype: String
-    $transmission: Transmission
+    $fueltype: [String]
+    $transmission: [Transmission]
     $milageMax: Int
     $milageMin: Int
-    $color: String
+    $color: [String]
   ) {
     filteredCars(
       make: $make

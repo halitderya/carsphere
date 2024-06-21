@@ -49,11 +49,11 @@ const resolvers = {
         make?: string;
         model?: string;
         year?: number;
-        fueltype?: string;
-        color: string;
+        fueltype?: string[];
+        color: string[];
         milage_min?: number;
         milage_max?: number;
-        transmission: Transmission;
+        transmission?: Transmission[];
         engine_capacity_min?: number;
         engine_capacity_max?: number;
         engine_type?: String;
@@ -72,12 +72,11 @@ const resolvers = {
       if (make) query.make = { $regex: new RegExp(make, "i") };
       if (model) query.model = { $regex: new RegExp(model, "i") };
       if (year) query.year = year;
-      if (fueltype) query.fueltype = { $regex: new RegExp(fueltype, "i") };
-      if (color) query.color = color;
+      if (fueltype) query.fueltype = { $in: fueltype };
+      if (color) query.color = { $in: color };
       if (milage_min) query.milage = { $gte: milage_min };
       if (milage_max) query.milage = { $lte: milage_max };
-      if (transmission)
-        query.transmission = { $regex: new RegExp(transmission, "i") };
+      if (transmission) query.transmission = { $in: transmission };
       if (engine_capacity_min)
         query.engine_capacity = {
           ...query.engine_capacity,
@@ -102,6 +101,8 @@ const resolvers = {
       if (ulez_compatible) query.ulez_compatible = ulez_compatible;
       if (doors) query.doors = doors;
       if (seats) query.seats = seats;
+
+      console.log("query:", query);
 
       return await Car.find(query);
     },

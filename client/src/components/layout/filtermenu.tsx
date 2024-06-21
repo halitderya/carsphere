@@ -1,63 +1,131 @@
-import { SyntheticEvent, useEffect, useState } from "react";
-import Hamburger from "../elements/hamburger";
+import { Fragment, SyntheticEvent, useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { FILTER_CARS } from "@/graphql/filter_cars";
+import { FilteredCars } from "@/graphql/filter_cars";
 import ICarCard from "@/types/carCardType";
+import { ICarFilterType } from "@/types/carFilterType";
 
 export default function FilterMenu({
   active,
   setActive,
   params,
   setParams,
+  result,
 }: {
   active: boolean;
   setActive: (active: boolean) => void;
-  params: { [key: string]: any };
-  setParams: any;
+  params: ICarFilterType;
+  setParams: (set: ICarFilterType) => void;
+  result: ICarCard[] | undefined;
 }) {
-  const deleteProperty = (prop: any) => {
-    let newParams = { ...params };
-    delete newParams[prop];
-    if (prop === "make") {
-      setSelectedMake("");
-      delete newParams["model"];
-    }
-    setParams(newParams);
-  };
-
-  async function handlefilterchange(e: SyntheticEvent) {
-    console.log("allcars: ", allCars);
-
-    const { id, value } = e.target as HTMLInputElement;
-
-    if (id && value === "") {
-      deleteProperty(id);
-      console.log("prop deleted: ", id);
-      // id === "make" && setUniqueModels([]);
-    }
-    if (id && value) {
-      id === "make" && setSelectedMake(value);
-      params = { ...params, [id]: value };
-      setParams(params);
-    }
-  }
-  const [getCars, { loading, error, data }] = useLazyQuery(FILTER_CARS, {
+  const [getCars, { loading, error, data }] = useLazyQuery(FilteredCars, {
     variables: { ...params },
   });
   const [uniqueMakes, setUniqueMakes] = useState<string[]>([]);
-  const [allCars, setAllCars] = useState<[]>([]);
+  const [allCars, setAllCars] = useState<ICarCard[]>([]);
   const [selectedMake, setSelectedMake] = useState<string>("");
+  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>(
+    []
+  );
+  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>();
+  const [selectedColours, setSelectedColours] = useState<string[]>([]);
   const [uniqueTransmission, setUniqueTransmission] = useState<string[]>([]);
   const [uniqueFuelType, setUniqueFuelType] = useState<string[]>([]);
+  const [uniqueColour, setUniqueColour] = useState<string[]>([]);
+
+  const deleteProperty = (prop: keyof ICarFilterType, value: any) => {
+    let newParams = { ...params };
+
+    if (prop === "make") {
+      setSelectedMake("");
+
+      delete newParams["model"];
+    }
+    prop === "model" && setSelectedModel("");
+    if (Array.isArray(newParams[prop])) {
+      if ((newParams[prop] as (typeof prop)[]).length === 1) {
+        delete newParams[prop];
+      } else {
+        let newProp: any[] = [];
+
+        (newParams[prop] as []).forEach((x) => {
+          if (x !== value) {
+            newProp.push(x);
+          }
+        });
+
+        newParams[prop] = newProp as any;
+      }
+    } else {
+      delete newParams[prop];
+    }
+    setParams(newParams);
+  };
+  const addProperty = (prop: keyof ICarFilterType, value: any[] | any) => {
+    let newparams: ICarFilterType = { ...params };
+
+    if (Array.isArray(newparams[prop])) {
+      (newparams[prop] as any[]).push(...value);
+    } else {
+      newparams[prop] = value;
+    }
+
+    setParams(newparams);
+  };
 
   useEffect(() => {
-    setUniqueTransmission([
-      ...new Set(allCars.map((car: ICarCard) => car.transmission)),
-    ]);
-    setUniqueFuelType([
-      ...new Set(allCars.map((car: ICarCard) => car.fueltype)),
-    ]);
-  }, [uniqueTransmission, uniqueFuelType]);
+    result &&
+      setUniqueMakes(
+        Array.from(
+          new Set((result as ICarCard[]).map((car: ICarCard) => car.make))
+        )
+      );
+  }, [result]);
+  // const testfunc=()=>{
+  //   let newarray:ICarCard[] = allCars
+
+  //   Object.values(params as ICarFilterType).forEach((x)=>{
+  //     if(Array.isArray(x as keyof ICarFilterType)){
+  //      newarray.filter((f)=>{})
+  //     }
+
+  //   })
+  // }
+  async function handlefilterchange(e: SyntheticEvent) {
+    ////////
+
+    ///////
+
+    const target = e.target as HTMLInputElement;
+
+    const { value, id } = e.target as HTMLInputElement;
+
+    if (target.type === "checkbox") {
+      if (target.checked) {
+        addProperty(id as keyof ICarFilterType, [value]);
+      } else if (!target.checked) {
+        deleteProperty(id as keyof ICarFilterType, value);
+      } else {
+        console.error("Unknown action: ", e);
+      }
+    } else if (target.type === "select-one") {
+      if (id && value) {
+        id === "make" && setSelectedMake(value);
+        id === "model" && setSelectedModel(value);
+        params = { ...params, [id]: value };
+        setParams(params);
+      }
+
+      addProperty(id as keyof ICarFilterType, value);
+
+      if (id && value === "") {
+        deleteProperty(id as keyof ICarFilterType, value);
+      }
+    } else {
+      console.error("unknown target type: ", target.type);
+    }
+  }
+
   useEffect(() => {
     getCars({ variables: { ...params } }).then((x) => {
       if (x.data && x.data.filteredCars) {
@@ -72,16 +140,38 @@ export default function FilterMenu({
             )
           )
         );
+
         setAllCars(x.data.filteredCars);
+        reMap(x.data.filteredCars);
       }
     });
   }, []);
-
+  const handleReset = () => {};
+  const reMap = async (x: ICarCard[]) => {
+    if (x) {
+      setUniqueTransmission([
+        ...(Array.from(
+          new Set(x.map((car: ICarCard) => car.transmission))
+        ) as string[]),
+      ]);
+      setUniqueFuelType([
+        ...(Array.from(
+          new Set(x.map((car: ICarCard) => car.fueltype))
+        ) as string[]),
+      ]);
+      setUniqueColour([
+        ...(Array.from(
+          new Set(x.map((car: ICarCard) => car.color))
+        ) as string[]),
+      ]);
+    } else {
+    }
+  };
   return (
     <div className={`filtermenu ${active ? "open" : ""}`}>
       <div className="filtermenuheader">
         <div>Find your dream car:</div>
-
+        {/* <button onClick={testfunc}>Reset1</button> */}
         <div
           className="closefilter"
           onClick={() => {
@@ -92,184 +182,112 @@ export default function FilterMenu({
         </div>
       </div>
 
-      <div className="options">
+      <div className="filterarea options">
         {" "}
-        <select id="make" onChange={handlefilterchange}>
-          Make
+        <select id="make" value={selectedMake} onChange={handlefilterchange}>
           <option value="">All</option>
-          {[
-            ...new Set(
-              allCars
-                .filter((item: ICarCard) => {
-                  return Object.keys(params).every(
-                    (key) =>
-                      params[key as keyof ICarCard] === undefined ||
-                      item[key as keyof ICarCard] ===
-                        params[key as keyof ICarCard]
-                  );
-                })
-                .map((item: ICarCard) => item.make)
-            ),
-          ].map((make) => {
-            const count = allCars.filter((item: ICarCard) => {
-              return (
-                Object.keys(params).every(
-                  (key) =>
-                    params[key as keyof ICarCard] === undefined ||
-                    item[key as keyof ICarCard] ===
-                      params[key as keyof ICarCard]
-                ) && item.make === make
-              );
-            }).length;
-            return (
-              <option key={make} value={make}>
-                {make} ({count})
-              </option>
-            );
-          })}
+
+          {uniqueMakes.map((mk, index) => (
+            <Fragment key={index}>
+              {
+                <option key={index} value={mk}>
+                  {mk}( {result && result.filter((x) => x.make === mk).length} )
+                </option>
+              }
+            </Fragment>
+          ))}
         </select>
-        <select
-          disabled={selectedMake === ""}
-          id="model"
-          onChange={handlefilterchange}
-        >
-          <option value={""}>All</option>
-          {[
-            ...new Set(
-              allCars
-                .filter((item: ICarCard) => {
-                  return Object.keys(params).every(
-                    (key) =>
-                      params[key as keyof ICarCard] === undefined ||
-                      item[key as keyof ICarCard] ===
-                        params[key as keyof ICarCard]
-                  );
-                })
-                .map((item: ICarCard) => item.model)
-            ),
-          ].map((model) => {
-            const count = allCars.filter((item: ICarCard) => {
-              return (
-                Object.keys(params).every(
-                  (key) =>
-                    params[key as keyof ICarCard] === undefined ||
-                    item[key as keyof ICarCard] ===
-                      params[key as keyof ICarCard]
-                ) && item.model === model
-              );
-            }).length;
-            return (
-              <option key={model} value={model}>
-                {model} ({count})
-              </option>
-            );
-          })}
-        </select>
+        {result && selectedMake && (
+          <select
+            id="model"
+            value={selectedModel}
+            onChange={handlefilterchange}
+          >
+            <option value="">All</option>
+
+            {result.map((mk, index) => (
+              <Fragment key={index}>
+                {
+                  <option key={index} value={mk.model}>
+                    {mk.model}({" "}
+                    {result && result.filter((x) => x === mk).length} )
+                  </option>
+                }
+              </Fragment>
+            ))}
+          </select>
+        )}
         <div>
           <h4>Transmission</h4>
-          {uniqueTransmission.map((tr) => (
-            <div>
-              <label htmlFor={tr}>
-                {tr}
-                {""} (
-                {allCars.filter((s: ICarCard) => s.transmission === tr).length})
-              </label>
-              <input
-                id="transmission"
-                onChange={handlefilterchange}
-                type="checkbox"
-                value={tr}
-              />
-            </div>
+          {uniqueTransmission.map((tr, index) => (
+            <Fragment key={index}>
+              <div key={index}>
+                <label htmlFor={tr}>
+                  {tr}
+                  {""} (
+                  {
+                    allCars!.filter((s: ICarCard) => s.transmission === tr)
+                      .length
+                  }
+                  )
+                </label>
+                <input
+                  id="transmission"
+                  onChange={async (e) => {
+                    await handlefilterchange(e);
+                    reMap(allCars);
+                  }}
+                  type="checkbox"
+                  value={tr}
+                />
+              </div>
+            </Fragment>
           ))}
         </div>
         <div>
           {" "}
           <h4>Fuel Type</h4>
-          {uniqueFuelType.map((uf) => (
-            <div>
-              <label htmlFor={uf}>
-                {uf}
-                {""} (
-                {allCars.filter((s: ICarCard) => s.fueltype === uf).length})
-              </label>
-              <input
-                id="fueltype"
-                onChange={handlefilterchange}
-                type="checkbox"
-                value={uf}
-              />
-            </div>
+          {uniqueFuelType.map((uf, index) => (
+            <Fragment key={index}>
+              <div key={index}>
+                <label htmlFor={uf}>
+                  {uf}
+                  {""} (
+                  {result!.filter((s: ICarCard) => s.fueltype === uf).length})
+                </label>
+                <input
+                  id="fueltype"
+                  onChange={async (e) => {
+                    await handlefilterchange(e);
+                    reMap(allCars);
+                  }}
+                  type="checkbox"
+                  value={uf}
+                />
+              </div>
+            </Fragment>
           ))}
         </div>
-        <select id="color" onChange={handlefilterchange}>
-          <option value={""}>All</option>
-          {[
-            ...new Set(
-              allCars
-                .filter((item: ICarCard) => {
-                  return Object.keys(params).every(
-                    (key) =>
-                      params[key as keyof ICarCard] === undefined ||
-                      item[key as keyof ICarCard] ===
-                        params[key as keyof ICarCard]
-                  );
-                })
-                .map((item: ICarCard) => item.color)
-            ),
-          ].map((color) => {
-            const count = allCars.filter((item: ICarCard) => {
-              return (
-                Object.keys(params).every(
-                  (key) =>
-                    params[key as keyof ICarCard] === undefined ||
-                    item[key as keyof ICarCard] ===
-                      params[key as keyof ICarCard]
-                ) && item.color === color
-              );
-            }).length;
-            return (
-              <option key={color} value={color}>
-                {color} ({count})
-              </option>
-            );
-          })}
-        </select>
-        {/* <div id="ulez_compatible">
-          {[
-            ...new Set(
-              allCars
-                .filter((item: ICarCard) => {
-                  return Object.keys(params).every(
-                    (key) =>
-                      params[key as keyof ICarCard] === undefined ||
-                      item[key as keyof ICarCard] ===
-                        params[key as keyof ICarCard]
-                  );
-                })
-                .map((item: ICarCard) => item.ulez_compatible)
-            ),
-          ].map((ulez) => {
-            const count = allCars.filter((item: ICarCard) => {
-              return (
-                Object.keys(params).every(
-                  (key) =>
-                    params[key as keyof ICarCard] === undefined ||
-                    item[key as keyof ICarCard] ===
-                      params[key as keyof ICarCard]
-                ) && item.ulez_compatible === ulez
-              );
-            }).length;
-            return (
+        <h4>Colour</h4>
+        {uniqueColour.map((uc, index) => (
+          <Fragment key={index}>
+            <div key={index}>
+              <label htmlFor={uc}>
+                {uc}
+                {""} ({result!.filter((s: ICarCard) => s.color === uc).length})
+              </label>
               <input
-                id="ulez"
+                id="color"
+                onChange={async (e) => {
+                  await handlefilterchange(e);
+                  reMap(allCars);
+                }}
                 type="checkbox"
-                checked={ulez}
-                value={"ulez"}
-              ></input>
-            );
-          })}
-        </div> */}
+                value={uc}
+              />
+            </div>
+          </Fragment>
+        ))}
       </div>
     </div>
   );

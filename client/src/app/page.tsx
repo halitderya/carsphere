@@ -3,27 +3,30 @@ import Header from "@/components/layout/header";
 import FilterMenu from "@/components/layout/filtermenu";
 import CarCard from "@/components/essentials/carCard";
 import Footer from "@/components/layout/footer";
-import { gql, useLazyQuery, useQuery } from "@apollo/client";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { useLazyQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
 import ICarCard from "@/types/carCardType";
-import { FILTER_CARS } from "@/graphql/filter_cars";
+import { FilteredCars } from "@/graphql/filter_cars";
+import { ICarFilterType, initialParams } from "@/types/carFilterType";
 
 export default function Index() {
-  const [params, setParams] = useState<{}>({});
+  const [params, setParams] = useState<ICarFilterType>(initialParams);
 
   const [totalcars, setTotalCars] = useState<string>("");
-  const [getCars, { loading, error, data }] = useLazyQuery(FILTER_CARS, {
+
+  const [getCars, { loading, error, data }] = useLazyQuery(FilteredCars, {
     variables: { ...params },
+    fetchPolicy: "cache-and-network",
   });
   const [active, setActive] = useState<boolean>(true);
-
+  const [result, setResult] = useState<ICarCard[]>();
   useEffect(() => {
-    console.log("params:", params);
-
     getCars({ variables: { ...params } }).then((x) => {
-      totalcars === "" && setTotalCars(x.data.filteredCars.length);
+      setTotalCars(x.data.filteredCars.length);
+      setResult(x.data.filteredCars);
     });
   }, [params]);
+
   function handleCardClicked(e: any) {}
   return (
     <div className="greatparent">
@@ -33,7 +36,7 @@ export default function Index() {
           <div className="leftcolumn">
             <a
               onClick={() => {
-                setParams([]);
+                setParams(new Object());
               }}
             >
               Reset
@@ -44,6 +47,7 @@ export default function Index() {
               params={params}
               active={active}
               setActive={setActive}
+              result={result}
             />
           </div>
           <div className="centercolumn">
@@ -62,6 +66,7 @@ export default function Index() {
                     (car: ICarCard, index: number) => (
                       <div className="carcard" key={index}>
                         <CarCard
+                          key={index}
                           carData={car}
                           onClick={handleCardClicked}
                         ></CarCard>
