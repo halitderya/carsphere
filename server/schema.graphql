@@ -7,11 +7,11 @@ type Query {
     model: String
     year_min: Int
     year_max: Int
-    color: String
+    color: [String]
     milage_min: Int
     milage_max: Int
-    fueltype: String
-    transmission: Transmission
+    fueltype: [String]
+    transmission: [Transmission]
     engine_capacity_min: Int
     engine_capacity_max: Int
     engine_type: String
@@ -117,6 +117,5 @@ type Picture {
 enum Transmission {
   Automatic
   Semi_Automatic
-
   Manual
 }
