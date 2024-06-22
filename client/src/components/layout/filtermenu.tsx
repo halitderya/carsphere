@@ -27,8 +27,8 @@ export default function FilterMenu({
   const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>(
     []
   );
-  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>();
-  const [selectedColours, setSelectedColours] = useState<string[]>([]);
+  // const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>();
+  // const [selectedColours, setSelectedColours] = useState<string[]>([]);
   const [uniqueTransmission, setUniqueTransmission] = useState<string[]>([]);
   const [uniqueFuelType, setUniqueFuelType] = useState<string[]>([]);
   const [uniqueColour, setUniqueColour] = useState<string[]>([]);
@@ -81,16 +81,38 @@ export default function FilterMenu({
         )
       );
   }, [result]);
-  // const testfunc=()=>{
-  //   let newarray:ICarCard[] = allCars
+  const testfunc = (sender: string) => {
+    let newarray: ICarCard[] = allCars;
+    let hoppa: ICarCard[];
+    Object.keys(params as ICarFilterType).forEach((x) => {
+      if (x === sender) {
+        if (Array.isArray(params[x as keyof ICarFilterType])) {
+          console.log("array and fueltype", params[x as keyof ICarFilterType]);
+          hoppa = newarray.filter((car) =>
+            (params[x as keyof ICarFilterType] as string[]).some(
+              (value) => car[x as keyof ICarCard] === value
+            )
+          );
+        } else {
+          hoppa = newarray.filter(
+            (car) =>
+              car[x as keyof ICarCard] === params[x as keyof ICarFilterType]
+          );
+        }
+      }
+      console.log(hoppa);
+      // console.log(x, params[x as keyof ICarFilterType]);
+    });
 
-  //   Object.values(params as ICarFilterType).forEach((x)=>{
-  //     if(Array.isArray(x as keyof ICarFilterType)){
-  //      newarray.filter((f)=>{})
-  //     }
-
-  //   })
-  // }
+    // Object.values(params as ICarFilterType).forEach((x) => {
+    //   if (Array.isArray(x as keyof ICarFilterType)) {
+    //     console.log(Object.keys(x), "array X: ", x);
+    //     const other = allCars.filter(() => {});
+    //   } else {
+    //     console.log("non array X: ", x);
+    //   }
+    // });
+  };
   async function handlefilterchange(e: SyntheticEvent) {
     ////////
 
@@ -171,7 +193,7 @@ export default function FilterMenu({
     <div className={`filtermenu ${active ? "open" : ""}`}>
       <div className="filtermenuheader">
         <div>Find your dream car:</div>
-        {/* <button onClick={testfunc}>Reset1</button> */}
+        <button onClick={() => testfunc("fueltype")}>Reset1</button>
         <div
           className="closefilter"
           onClick={() => {
