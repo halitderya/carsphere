@@ -9,5 +9,6 @@ type ICarCard = {
   ulez_compatible: boolean;
   featurelist: string[];
   price: number;
+  door: number;
 };
 export default ICarCard;

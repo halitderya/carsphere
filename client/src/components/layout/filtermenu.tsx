@@ -20,7 +20,6 @@ export default function FilterMenu({
   const [getCars, { loading, error, data }] = useLazyQuery(FilteredCars, {
     variables: { ...params },
   });
-  const [uniqueMakes, setUniqueMakes] = useState<string[]>([]);
   const [allCars, setAllCars] = useState<ICarCard[]>([]);
   const [selectedMake, setSelectedMake] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
@@ -29,9 +28,13 @@ export default function FilterMenu({
   );
   // const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>();
   // const [selectedColours, setSelectedColours] = useState<string[]>([]);
+  const [uniqueMakes, setUniqueMakes] = useState<string[]>([]);
+
+  const [uniqueModel, setUniqueModel] = useState<string[]>([]);
   const [uniqueTransmission, setUniqueTransmission] = useState<string[]>([]);
   const [uniqueFuelType, setUniqueFuelType] = useState<string[]>([]);
   const [uniqueColour, setUniqueColour] = useState<string[]>([]);
+  const [uniqueDoors, setUniqueDoors] = useState<number[]>([]);
 
   const deleteProperty = (prop: keyof ICarFilterType, value: any) => {
     let newParams = { ...params };
@@ -85,7 +88,7 @@ export default function FilterMenu({
     let newarray: ICarCard[] = allCars;
     let hoppa: ICarCard[];
     Object.keys(params as ICarFilterType).forEach((x) => {
-      if (x === sender) {
+      if (x !== sender) {
         if (Array.isArray(params[x as keyof ICarFilterType])) {
           console.log("array and fueltype", params[x as keyof ICarFilterType]);
           hoppa = newarray.filter((car) =>
@@ -162,6 +165,7 @@ export default function FilterMenu({
             )
           )
         );
+        setUniqueModel(models);
 
         setAllCars(x.data.filteredCars);
         reMap(x.data.filteredCars);
@@ -185,6 +189,11 @@ export default function FilterMenu({
         ...(Array.from(
           new Set(x.map((car: ICarCard) => car.color))
         ) as string[]),
+      ]);
+      setUniqueDoors([
+        ...(Array.from(
+          new Set(x.map((car: ICarCard) => car.door))
+        ) as number[]),
       ]);
     } else {
     }
@@ -227,16 +236,19 @@ export default function FilterMenu({
           >
             <option value="">All</option>
 
-            {result.map((mk, index) => (
-              <Fragment key={index}>
-                {
-                  <option key={index} value={mk.model}>
-                    {mk.model}({" "}
-                    {result && result.filter((x) => x === mk).length} )
-                  </option>
-                }
-              </Fragment>
-            ))}
+            {uniqueModel
+              .filter((f) => f === selectedMake)
+              .map((mk, index) => (
+                <Fragment key={index}>
+                  {
+                    <option key={index} value={mk}>
+                      {mk}({" "}
+                      {/* {result && result.filter((x) => x === mk).length} ) */}
+                      )
+                    </option>
+                  }
+                </Fragment>
+              ))}
           </select>
         )}
         <div>
@@ -310,6 +322,26 @@ export default function FilterMenu({
             </div>
           </Fragment>
         ))}
+        {/* <h4>Doors</h4>
+        {uniqueDoors.map((uc, index) => (
+          <Fragment key={index}>
+            <div key={index}>
+              <label htmlFor={uc}>
+                {uc}
+                {""} ({result!.filter((s: ICarCard) => s.door === uc).length})
+              </label>
+              <input
+                id="color"
+                onChange={async (e) => {
+                  await handlefilterchange(e);
+                  reMap(allCars);
+                }}
+                type="checkbox"
+                value={uc}
+              />
+            </div>
+          </Fragment>
+        ))} */}
       </div>
     </div>
   );

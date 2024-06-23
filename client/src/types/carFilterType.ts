@@ -9,5 +9,6 @@ export type ICarFilterType = {
   ulez_compatible?: boolean;
   featurelist?: string[];
   price?: number;
+  door?: number;
 };
 export const initialParams: ICarFilterType = {};
