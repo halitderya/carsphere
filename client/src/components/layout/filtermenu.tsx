@@ -84,50 +84,42 @@ export default function FilterMenu({
         )
       );
   }, [result]);
-  const testfunc = (sender: string) => {
-    let newarray: ICarCard[] = allCars;
-    let hoppa: ICarCard[];
-    Object.keys(params as ICarFilterType).forEach((x) => {
-      if (x !== sender) {
-        if (Array.isArray(params[x as keyof ICarFilterType])) {
-          console.log("array and fueltype", params[x as keyof ICarFilterType]);
-          hoppa = newarray.filter((car) =>
-            (params[x as keyof ICarFilterType] as string[]).some(
-              (value) => car[x as keyof ICarCard] === value
+  const testfunc = (sender: string): any[] => {
+    let tempArray: any[] = allCars;
+
+    Object.keys(params as ICarFilterType).forEach((paramkey) => {
+      if (sender !== paramkey) {
+        if (Array.isArray(params[paramkey as keyof ICarFilterType])) {
+          tempArray = tempArray.filter((car) =>
+            (params[paramkey as keyof ICarFilterType] as any[]).includes(
+              car[paramkey as keyof ICarFilterType]
             )
           );
         } else {
-          hoppa = newarray.filter(
+          tempArray = tempArray.filter(
             (car) =>
-              car[x as keyof ICarCard] === params[x as keyof ICarFilterType]
+              car[paramkey as keyof ICarFilterType] ===
+              params[paramkey as keyof ICarFilterType]
           );
         }
       }
-      console.log(hoppa);
-      // console.log(x, params[x as keyof ICarFilterType]);
     });
 
-    // Object.values(params as ICarFilterType).forEach((x) => {
-    //   if (Array.isArray(x as keyof ICarFilterType)) {
-    //     console.log(Object.keys(x), "array X: ", x);
-    //     const other = allCars.filter(() => {});
-    //   } else {
-    //     console.log("non array X: ", x);
-    //   }
-    // });
+    return tempArray;
   };
+
   async function handlefilterchange(e: SyntheticEvent) {
-    ////////
-
-    ///////
-
     const target = e.target as HTMLInputElement;
 
     const { value, id } = e.target as HTMLInputElement;
 
     if (target.type === "checkbox") {
       if (target.checked) {
-        addProperty(id as keyof ICarFilterType, [value]);
+        if (id === "doors") {
+          addProperty(id as keyof ICarFilterType, [Number(value)]);
+        } else {
+          addProperty(id as keyof ICarFilterType, [value]);
+        }
       } else if (!target.checked) {
         deleteProperty(id as keyof ICarFilterType, value);
       } else {
@@ -190,9 +182,10 @@ export default function FilterMenu({
           new Set(x.map((car: ICarCard) => car.color))
         ) as string[]),
       ]);
+
       setUniqueDoors([
         ...(Array.from(
-          new Set(x.map((car: ICarCard) => car.door))
+          new Set(x.map((car: ICarCard) => car.doors))
         ) as number[]),
       ]);
     } else {
@@ -235,113 +228,147 @@ export default function FilterMenu({
             onChange={handlefilterchange}
           >
             <option value="">All</option>
-
-            {uniqueModel
-              .filter((f) => f === selectedMake)
-              .map((mk, index) => (
-                <Fragment key={index}>
-                  {
-                    <option key={index} value={mk}>
-                      {mk}({" "}
-                      {/* {result && result.filter((x) => x === mk).length} ) */}
-                      )
-                    </option>
-                  }
-                </Fragment>
-              ))}
+            {[
+              ...new Set(
+                result
+                  .filter((f) => f.make === selectedMake)
+                  .map((mk) => mk.model)
+              ),
+            ].map((model, index) => (
+              <Fragment key={index}>
+                <option value={model}>{model}</option>
+              </Fragment>
+            ))}
           </select>
         )}
         <div>
           <h4>Transmission</h4>
-          {uniqueTransmission.map((tr, index) => (
-            <Fragment key={index}>
-              <div key={index}>
-                <label htmlFor={tr}>
-                  {tr}
-                  {""} (
-                  {
-                    allCars!.filter((s: ICarCard) => s.transmission === tr)
-                      .length
-                  }
-                  )
-                </label>
-                <input
-                  id="transmission"
-                  onChange={async (e) => {
-                    await handlefilterchange(e);
-                    reMap(allCars);
-                  }}
-                  type="checkbox"
-                  value={tr}
-                />
-              </div>
-            </Fragment>
-          ))}
+          {(() => {
+            return uniqueTransmission.map((ut, index) => {
+              const filteredCars = testfunc("transmission").filter(
+                (f) => f.transmission === ut
+              );
+
+              if (filteredCars.length === 0) {
+                return null;
+              }
+
+              return (
+                <Fragment key={index}>
+                  <div>
+                    <label htmlFor={ut}>
+                      {ut} ({filteredCars.length})
+                    </label>
+                    <input
+                      id="transmission"
+                      onChange={async (e) => {
+                        await handlefilterchange(e);
+                      }}
+                      type="checkbox"
+                      value={ut}
+                    />
+                  </div>
+                </Fragment>
+              );
+            });
+          })()}
         </div>
         <div>
-          {" "}
           <h4>Fuel Type</h4>
-          {uniqueFuelType.map((uf, index) => (
-            <Fragment key={index}>
-              <div key={index}>
-                <label htmlFor={uf}>
-                  {uf}
-                  {""} (
-                  {result!.filter((s: ICarCard) => s.fueltype === uf).length})
-                </label>
-                <input
-                  id="fueltype"
-                  onChange={async (e) => {
-                    await handlefilterchange(e);
-                    reMap(allCars);
-                  }}
-                  type="checkbox"
-                  value={uf}
-                />
-              </div>
-            </Fragment>
-          ))}
+          {(() => {
+            return uniqueFuelType.map((uf, index) => {
+              const filteredCars = testfunc("fueltype").filter(
+                (f) => f.fueltype === uf
+              );
+
+              if (filteredCars.length === 0) {
+                return null;
+              }
+
+              return (
+                <Fragment key={index}>
+                  <div>
+                    <label htmlFor={uf}>
+                      {uf} ({filteredCars.length})
+                    </label>
+                    <input
+                      id="fueltype"
+                      onChange={async (e) => {
+                        await handlefilterchange(e);
+                      }}
+                      type="checkbox"
+                      value={uf}
+                    />
+                  </div>
+                </Fragment>
+              );
+            });
+          })()}
         </div>
-        <h4>Colour</h4>
-        {uniqueColour.map((uc, index) => (
-          <Fragment key={index}>
-            <div key={index}>
-              <label htmlFor={uc}>
-                {uc}
-                {""} ({result!.filter((s: ICarCard) => s.color === uc).length})
-              </label>
-              <input
-                id="color"
-                onChange={async (e) => {
-                  await handlefilterchange(e);
-                  reMap(allCars);
-                }}
-                type="checkbox"
-                value={uc}
-              />
-            </div>
-          </Fragment>
-        ))}
-        {/* <h4>Doors</h4>
-        {uniqueDoors.map((uc, index) => (
-          <Fragment key={index}>
-            <div key={index}>
-              <label htmlFor={uc}>
-                {uc}
-                {""} ({result!.filter((s: ICarCard) => s.door === uc).length})
-              </label>
-              <input
-                id="color"
-                onChange={async (e) => {
-                  await handlefilterchange(e);
-                  reMap(allCars);
-                }}
-                type="checkbox"
-                value={uc}
-              />
-            </div>
-          </Fragment>
-        ))} */}
+        <div>
+          <h4>Colour</h4>
+          {(() => {
+            return uniqueColour.map((uc, index) => {
+              const filteredCars = testfunc("color").filter(
+                (f: ICarCard) => f.color === uc
+              );
+
+              if (filteredCars.length === 0) {
+                return null;
+              }
+
+              return (
+                <Fragment key={index}>
+                  <div>
+                    <label htmlFor={uc}>
+                      {uc} ({filteredCars.length})
+                    </label>
+                    <input
+                      id="color"
+                      onChange={async (e) => {
+                        await handlefilterchange(e);
+                      }}
+                      type="checkbox"
+                      value={uc}
+                    />
+                  </div>
+                </Fragment>
+              );
+            });
+          })()}
+        </div>
+        <div>
+          <h4>Door</h4>
+          {(() => {
+            return uniqueDoors.map((ud, index) => {
+              const filteredCars = testfunc("doors").filter(
+                (f: ICarCard) => f.doors === ud
+              );
+
+              if (filteredCars.length === 0) {
+                return null;
+              }
+
+              return (
+                <Fragment key={index}>
+                  <div>
+                    <label>
+                      {ud} ({filteredCars.length})
+                    </label>
+                    <input
+                      id="doors"
+                      onChange={async (e) => {
+                        await handlefilterchange(e);
+                      }}
+                      type="checkbox"
+                      value={ud}
+                    />
+                  </div>
+                </Fragment>
+              );
+            });
+          })()}
+        </div>
       </div>
     </div>
   );

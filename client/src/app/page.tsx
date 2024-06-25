@@ -23,6 +23,7 @@ export default function Index() {
   useEffect(() => {
     getCars({ variables: { ...params } }).then((x) => {
       setTotalCars(x.data.filteredCars.length);
+
       setResult(x.data.filteredCars);
     });
   }, [params]);
