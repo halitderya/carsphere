@@ -3,12 +3,12 @@ export type ICarFilterType = {
   model?: string;
 
   color?: string[];
-  fueltype?: string;
+  fueltype?: string[];
   transmission?: string[];
   milage?: number;
   ulez_compatible?: boolean;
   featurelist?: string[];
   price?: number;
-  door?: number;
+  doors?: number[];
 };
 export const initialParams: ICarFilterType = {};

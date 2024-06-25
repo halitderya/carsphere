@@ -21,8 +21,8 @@ type Query {
     previous_owner_min: Int
     previous_owner_max: Int
     ulez_compatible: Boolean
-    doors: Int
-    seats: Int
+    doors: [Int]
+    seats: [Int]
   ): [Car]
 }
 

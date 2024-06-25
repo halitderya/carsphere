@@ -63,8 +63,8 @@ const resolvers = {
         previous_owner_min: number;
         previous_owner_max: number;
         ulez_compatible: Boolean;
-        doors: number;
-        seats: number;
+        doors: number[];
+        seats: number[];
       }
     ) => {
       let query: any = {};
@@ -99,8 +99,8 @@ const resolvers = {
       if (previous_owner_max)
         query.previous_owner = { $lte: previous_owner_max };
       if (ulez_compatible) query.ulez_compatible = ulez_compatible;
-      if (doors) query.doors = doors;
-      if (seats) query.seats = seats;
+      if (doors) query.doors = { $in: doors };
+      if (seats) query.seats = { $in: seats };
 
       console.log("query:", query);
 
