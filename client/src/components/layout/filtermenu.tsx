@@ -23,14 +23,7 @@ export default function FilterMenu({
   const [allCars, setAllCars] = useState<ICarCard[]>([]);
   const [selectedMake, setSelectedMake] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
-  const [selectedTransmissions, setSelectedTransmissions] = useState<string[]>(
-    []
-  );
-  // const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>();
-  // const [selectedColours, setSelectedColours] = useState<string[]>([]);
   const [uniqueMakes, setUniqueMakes] = useState<string[]>([]);
-
-  const [uniqueModel, setUniqueModel] = useState<string[]>([]);
   const [uniqueTransmission, setUniqueTransmission] = useState<string[]>([]);
   const [uniqueFuelType, setUniqueFuelType] = useState<string[]>([]);
   const [uniqueColour, setUniqueColour] = useState<string[]>([]);
@@ -38,6 +31,7 @@ export default function FilterMenu({
 
   const deleteProperty = (prop: keyof ICarFilterType, value: any) => {
     let newParams = { ...params };
+    console.log("prop: ", prop, "value: ", value, "params: ", params);
 
     if (prop === "make") {
       setSelectedMake("");
@@ -49,6 +43,8 @@ export default function FilterMenu({
       if ((newParams[prop] as (typeof prop)[]).length === 1) {
         delete newParams[prop];
       } else {
+        console.log("burasi true");
+
         let newProp: any[] = [];
 
         (newParams[prop] as []).forEach((x) => {
@@ -58,6 +54,7 @@ export default function FilterMenu({
         });
 
         newParams[prop] = newProp as any;
+        console.log(newParams);
       }
     } else {
       delete newParams[prop];
@@ -84,7 +81,7 @@ export default function FilterMenu({
         )
       );
   }, [result]);
-  const testfunc = (sender: string): any[] => {
+  const calculator = (sender: string): any[] => {
     let tempArray: any[] = allCars;
 
     Object.keys(params as ICarFilterType).forEach((paramkey) => {
@@ -157,7 +154,7 @@ export default function FilterMenu({
             )
           )
         );
-        setUniqueModel(models);
+        // setUniqueModel(models);
 
         setAllCars(x.data.filteredCars);
         reMap(x.data.filteredCars);
@@ -195,7 +192,45 @@ export default function FilterMenu({
     <div className={`filtermenu ${active ? "open" : ""}`}>
       <div className="filtermenuheader">
         <div>Find your dream car:</div>
-        <button onClick={() => testfunc("fueltype")}>Reset1</button>
+        <div className="filterremover">
+          {Object.keys(params).map((x, index) => (
+            <div className="bigdiv" key={index + x}>
+              {Array.isArray(params[x as keyof ICarFilterType]) ? (
+                (params[x as keyof ICarFilterType] as []).map((a, index2) => (
+                  <div className="singlefilter" key={index2}>
+                    <div
+                      className="filterbutton"
+                      onClick={() => {
+                        deleteProperty(x as keyof ICarFilterType, a);
+                      }}
+                    >
+                      X
+                    </div>
+                    <div className="filtername">{a}</div>
+                  </div>
+                ))
+              ) : (
+                <div className="singlefilter">
+                  <div
+                    className="filterbutton"
+                    onClick={() => {
+                      deleteProperty(
+                        x as keyof ICarFilterType,
+                        params[x as keyof ICarFilterType]
+                      );
+                    }}
+                  >
+                    X
+                  </div>
+                  <div className="filtername">
+                    {params[x as keyof ICarFilterType]}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
         <div
           className="closefilter"
           onClick={() => {
@@ -245,7 +280,7 @@ export default function FilterMenu({
           <h4>Transmission</h4>
           {(() => {
             return uniqueTransmission.map((ut, index) => {
-              const filteredCars = testfunc("transmission").filter(
+              const filteredCars = calculator("transmission").filter(
                 (f) => f.transmission === ut
               );
 
@@ -277,7 +312,9 @@ export default function FilterMenu({
           <h4>Fuel Type</h4>
           {(() => {
             return uniqueFuelType.map((uf, index) => {
-              const filteredCars = testfunc("fueltype").filter(
+              const isChecked = params.color?.includes(uf) || false;
+
+              const filteredCars = calculator("fueltype").filter(
                 (f) => f.fueltype === uf
               );
 
@@ -293,6 +330,7 @@ export default function FilterMenu({
                     </label>
                     <input
                       id="fueltype"
+                      checked={isChecked}
                       onChange={async (e) => {
                         await handlefilterchange(e);
                       }}
@@ -309,7 +347,9 @@ export default function FilterMenu({
           <h4>Colour</h4>
           {(() => {
             return uniqueColour.map((uc, index) => {
-              const filteredCars = testfunc("color").filter(
+              const isChecked = params.color?.includes(uc) || false;
+
+              const filteredCars = calculator("color").filter(
                 (f: ICarCard) => f.color === uc
               );
 
@@ -325,6 +365,7 @@ export default function FilterMenu({
                     </label>
                     <input
                       id="color"
+                      checked={isChecked}
                       onChange={async (e) => {
                         await handlefilterchange(e);
                       }}
@@ -341,7 +382,7 @@ export default function FilterMenu({
           <h4>Door</h4>
           {(() => {
             return uniqueDoors.map((ud, index) => {
-              const filteredCars = testfunc("doors").filter(
+              const filteredCars = calculator("doors").filter(
                 (f: ICarCard) => f.doors === ud
               );
 
