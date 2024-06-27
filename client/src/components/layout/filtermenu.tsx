@@ -106,9 +106,12 @@ export default function FilterMenu({
   };
 
   async function handlefilterchange(e: SyntheticEvent) {
+    console.log("uniqueFuelType", uniqueFuelType);
+
     const target = e.target as HTMLInputElement;
 
     const { value, id } = e.target as HTMLInputElement;
+    console.log(id, value);
 
     if (target.type === "checkbox") {
       if (target.checked) {
@@ -138,6 +141,7 @@ export default function FilterMenu({
     } else {
       console.error("unknown target type: ", target.type);
     }
+    console.log(selectedMake);
   }
 
   useEffect(() => {
@@ -242,7 +246,6 @@ export default function FilterMenu({
       </div>
 
       <div className="filterarea options">
-        {" "}
         <select id="make" value={selectedMake} onChange={handlefilterchange}>
           <option value="">All</option>
 
@@ -312,7 +315,7 @@ export default function FilterMenu({
           <h4>Fuel Type</h4>
           {(() => {
             return uniqueFuelType.map((uf, index) => {
-              const isChecked = params.color?.includes(uf) || false;
+              const isChecked = params.fueltype?.includes(uf) || false;
 
               const filteredCars = calculator("fueltype").filter(
                 (f) => f.fueltype === uf
@@ -347,7 +350,7 @@ export default function FilterMenu({
           <h4>Colour</h4>
           {(() => {
             return uniqueColour.map((uc, index) => {
-              const isChecked = params.color?.includes(uc) || false;
+              // const isChecked = params.color?.includes(uc) || false;
 
               const filteredCars = calculator("color").filter(
                 (f: ICarCard) => f.color === uc
@@ -365,7 +368,7 @@ export default function FilterMenu({
                     </label>
                     <input
                       id="color"
-                      checked={isChecked}
+                      // checked={isChecked}
                       onChange={async (e) => {
                         await handlefilterchange(e);
                       }}
