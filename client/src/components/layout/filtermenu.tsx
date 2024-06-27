@@ -31,7 +31,6 @@ export default function FilterMenu({
 
   const deleteProperty = (prop: keyof ICarFilterType, value: any) => {
     let newParams = { ...params };
-    console.log("prop: ", prop, "value: ", value, "params: ", params);
 
     if (prop === "make") {
       setSelectedMake("");
@@ -43,8 +42,6 @@ export default function FilterMenu({
       if ((newParams[prop] as (typeof prop)[]).length === 1) {
         delete newParams[prop];
       } else {
-        console.log("burasi true");
-
         let newProp: any[] = [];
 
         (newParams[prop] as []).forEach((x) => {
@@ -54,7 +51,6 @@ export default function FilterMenu({
         });
 
         newParams[prop] = newProp as any;
-        console.log(newParams);
       }
     } else {
       delete newParams[prop];
@@ -82,10 +78,10 @@ export default function FilterMenu({
       );
   }, [result]);
   const calculator = (sender: string): any[] => {
-    let tempArray: any[] = allCars;
+    let tempArray = allCars;
 
     Object.keys(params as ICarFilterType).forEach((paramkey) => {
-      if (sender !== paramkey) {
+      if (sender !== paramkey.toString()) {
         if (Array.isArray(params[paramkey as keyof ICarFilterType])) {
           tempArray = tempArray.filter((car) =>
             (params[paramkey as keyof ICarFilterType] as any[]).includes(
@@ -99,6 +95,7 @@ export default function FilterMenu({
               params[paramkey as keyof ICarFilterType]
           );
         }
+      } else {
       }
     });
 
@@ -106,12 +103,9 @@ export default function FilterMenu({
   };
 
   async function handlefilterchange(e: SyntheticEvent) {
-    console.log("uniqueFuelType", uniqueFuelType);
-
     const target = e.target as HTMLInputElement;
 
     const { value, id } = e.target as HTMLInputElement;
-    console.log(id, value);
 
     if (target.type === "checkbox") {
       if (target.checked) {
@@ -141,7 +135,6 @@ export default function FilterMenu({
     } else {
       console.error("unknown target type: ", target.type);
     }
-    console.log(selectedMake);
   }
 
   useEffect(() => {
@@ -159,6 +152,10 @@ export default function FilterMenu({
           )
         );
         // setUniqueModel(models);
+        const fueltypes: string[] = Array.from(
+          new Set(x.data.filteredCars.map((car: ICarCard) => car.fueltype))
+        );
+        setUniqueFuelType(fueltypes);
 
         setAllCars(x.data.filteredCars);
         reMap(x.data.filteredCars);
@@ -283,31 +280,34 @@ export default function FilterMenu({
           <h4>Transmission</h4>
           {(() => {
             return uniqueTransmission.map((ut, index) => {
+              const isChecked = params.transmission?.includes(ut) || false;
+
               const filteredCars = calculator("transmission").filter(
                 (f) => f.transmission === ut
               );
 
               if (filteredCars.length === 0) {
                 return null;
+              } else {
+                return (
+                  <Fragment key={index}>
+                    <div>
+                      <label htmlFor={ut}>
+                        {ut}({filteredCars.length})
+                      </label>
+                      <input
+                        id="transmission"
+                        checked={isChecked}
+                        onChange={async (e) => {
+                          await handlefilterchange(e);
+                        }}
+                        type="checkbox"
+                        value={ut}
+                      />
+                    </div>
+                  </Fragment>
+                );
               }
-
-              return (
-                <Fragment key={index}>
-                  <div>
-                    <label htmlFor={ut}>
-                      {ut} ({filteredCars.length})
-                    </label>
-                    <input
-                      id="transmission"
-                      onChange={async (e) => {
-                        await handlefilterchange(e);
-                      }}
-                      type="checkbox"
-                      value={ut}
-                    />
-                  </div>
-                </Fragment>
-              );
             });
           })()}
         </div>
@@ -350,7 +350,7 @@ export default function FilterMenu({
           <h4>Colour</h4>
           {(() => {
             return uniqueColour.map((uc, index) => {
-              // const isChecked = params.color?.includes(uc) || false;
+              const isChecked = params.color?.includes(uc) || false;
 
               const filteredCars = calculator("color").filter(
                 (f: ICarCard) => f.color === uc
@@ -368,7 +368,7 @@ export default function FilterMenu({
                     </label>
                     <input
                       id="color"
-                      // checked={isChecked}
+                      checked={isChecked}
                       onChange={async (e) => {
                         await handlefilterchange(e);
                       }}
@@ -385,6 +385,8 @@ export default function FilterMenu({
           <h4>Door</h4>
           {(() => {
             return uniqueDoors.map((ud, index) => {
+              const isChecked = params.doors?.includes(ud) || false;
+
               const filteredCars = calculator("doors").filter(
                 (f: ICarCard) => f.doors === ud
               );
@@ -397,7 +399,7 @@ export default function FilterMenu({
                 <Fragment key={index}>
                   <div>
                     <label>
-                      {ud} ({filteredCars.length})
+                      {ud} Doors ({filteredCars.length})
                     </label>
                     <input
                       id="doors"
@@ -405,6 +407,7 @@ export default function FilterMenu({
                         await handlefilterchange(e);
                       }}
                       type="checkbox"
+                      checked={isChecked}
                       value={ud}
                     />
                   </div>

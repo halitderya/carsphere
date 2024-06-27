@@ -30,9 +30,7 @@ export default function Index() {
 
   function handleCardClicked(e: any) {}
 
-  return loading ? (
-    <p>Loading...</p>
-  ) : (
+  return (
     <div className="greatparent">
       <div className="mainwrapper">
         <Header active={active} setActive={setActive} />
