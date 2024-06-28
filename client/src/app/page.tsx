@@ -36,13 +36,6 @@ export default function Index() {
         <Header active={active} setActive={setActive} />
         <div className="maindiv">
           <div className="leftcolumn">
-            <a
-              onClick={() => {
-                setParams(new Object());
-              }}
-            >
-              Reset
-            </a>{" "}
             {/* Left Column */}
             <FilterMenu
               setParams={setParams}
@@ -66,13 +59,11 @@ export default function Index() {
                 data.filteredCars.length > 0 ? (
                   (data.filteredCars as ICarCard[]).map(
                     (car: ICarCard, index: number) => (
-                      <div className="carcard" key={index}>
-                        <CarCard
-                          key={index}
-                          carData={car}
-                          onClick={handleCardClicked}
-                        ></CarCard>
-                      </div>
+                      <CarCard
+                        key={index}
+                        carData={car}
+                        onClick={handleCardClicked}
+                      ></CarCard>
                     )
                   )
                 ) : (
