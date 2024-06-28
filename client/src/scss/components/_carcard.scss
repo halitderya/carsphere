@@ -1,21 +1,52 @@
-.carcard{
-    border: 3px solid gray;
-    border-radius: 5px;
-    padding: 10px;
+.carcard {
+  border: 3px solid gray;
+  border-radius: 5px;
+  padding: 10px;
 
+  width: 100%;
+  height: 400px;
+
+  @media (min-width: 320px) {
     width: 100%;
-    height: auto;
-
-    @media (min-width:320px) {width: 100%}
-    @media (min-width:480px) { width: 100% }
-    @media (min-width:801px) { width: 200px; }
-    @media (min-width:1025px) { width: 300px;}
+  }
+  @media (min-width: 480px) {
+    width: 100%;
+  }
+  @media (min-width: 801px) {
+    width: 200px;
+  }
+  @media (min-width: 1025px) {
+    width: 300px;
+  }
 }
-.carcardscontainer{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-    
-    
+.carcardscontainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 5px;
+}
+h2,
+h3,
+h4 {
+  margin: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+.cardgallerymain {
+  border: 1px dotted red;
+  align-items: center;
+  height: 200px;
+  width: 100%;
+  display: flex;
+  .imageview {
+    border: 1px dotted red;
+    width: 80%;
+  }
+  .button {
+    border: 1px dotted red;
+    width: 10%;
+  }
 }

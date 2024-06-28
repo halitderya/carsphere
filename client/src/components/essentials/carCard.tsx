@@ -9,9 +9,14 @@ export default function CarCard({
   carData: ICarCard;
 }) {
   return (
-    <div onClick={onClick}>
-      <div>{carData.make}</div>
-      <div>{carData.model}</div>
+    <div className="carcard" onClick={onClick}>
+      <div className="cardgallerymain">
+        <div>Left</div>
+        <div className="imageview">Center</div>
+        <div>Right</div>
+      </div>
+      <h2>{carData.make}</h2>
+      <h4>{carData.model}</h4>
       <div>{carData.milage}</div>
       <div>{carData.fueltype}</div>
       <div>{carData.transmission}</div>

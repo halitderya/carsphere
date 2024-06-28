@@ -1,102 +1,97 @@
-.filtermenu{
+.filtermenu {
   border: 2px solid #efefef;
   border-radius: 5px;
-    display: flex;
-    
-    align-items: center;
-    // padding: 5px;
-    width:30vw;
-    flex-direction: column;
-    box-sizing: border-box;
-    justify-content:space-between;
-    
-    
-    
+  display: flex;
 
-    @media (max-width: 500px) {
-        display: none;
-        width: 100vw;
-        &.open {
-          display: flex;
-          background-color: red;
-          position: fixed;
-          top: 0;
-          left: 0;
-          min-height: 100%;
-          border: 3px solid transparent;
-          border-radius: 10px;
-          padding: 5px;
-          align-items: center;
-          justify-content: flex-start;
-        }
-        
-      }
-      @media (min-width:500px){
-        max-width: 250px;
+  align-items: center;
+  // padding: 5px;
+  width: 30vw;
+  flex-direction: column;
+  box-sizing: border-box;
+  justify-content: space-between;
 
-      }
-     
-}
-.closefilter{
-        display: block;
-        @media (min-width:500px){
-            display: none;
-        }
-        
-   }
-    
- .filtermenuheader{
-
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    div{
-        padding: 5px;
-        border-radius: 10px;
+  @media (max-width: 500px) {
+    display: none;
+    width: 100vw;
+    &.open {
+      display: flex;
+      background-color: red;
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-height: 100%;
+      border: 3px solid transparent;
+      border-radius: 10px;
+      padding: 5px;
+      align-items: center;
+      justify-content: flex-start;
     }
-
- }
- .options{
-    display: flex;
-    flex-direction: column;
-    gap: 2vh;
-
-    width: 90%;
-    justify-items: center;
-    align-items: center;
-    select{
-        height: 2em;
-        width: 100%;
-        border: none;
-        border-radius: 5px;
-     
-        font-size: 1em;
-        font-weight: 400;
-
-        option{
-            width: 1em;
-        }
-    }
-    
- }
- .filterremover{
-  display:flex;
-  gap: 5px;
-
-
-  .removerheader{
-
   }
-  .singlefilter{
+  @media (min-width: 500px) {
+    max-width: 250px;
+  }
+}
+.closefilter {
+  display: block;
+  @media (min-width: 500px) {
+    display: none;
+  }
+}
+
+.filtermenuheader {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  // margin-bottom: 10px;
+  box-sizing: border-box;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  div {
+    padding: 5px;
+    border-radius: 10px;
+  }
+}
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+
+  width: 90%;
+  justify-items: center;
+  align-items: flex-start;
+  select {
+    height: 2em;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+
+    font-size: 1em;
+    font-weight: 400;
+
+    option {
+      width: 1em;
+    }
+  }
+}
+.filterremover {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+
+  .removerheader {
+  }
+  .singlefilter {
     border: 2px gray solid;
     border-radius: 2px;
+    cursor: pointer;
   }
-  .filtername{
+  .filtername {
+  }
+}
 
-  }
- }
-    
+.resetbutton {
+  border: 1px solid gray;
+  align-content: center;
+  justify-content: center;
+  cursor: pointer;
+}
