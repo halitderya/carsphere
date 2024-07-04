@@ -3,6 +3,7 @@ type ICarCard = {
   make: string;
   model: string;
   color: string;
+  year: number;
   fueltype: string;
   transmission: string;
   milage: number;
