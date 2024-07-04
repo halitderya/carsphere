@@ -5,8 +5,12 @@ export const FilteredCars = gql`
     $model: String
     $fueltype: [String]
     $transmission: [Transmission]
-    $milageMax: Int
-    $milageMin: Int
+    $milage_min: Int
+    $milage_max: Int
+    $year_min: Int
+    $year_max: Int
+    $price_min: Int
+    $price_max: Int
     $color: [String]
     $doors: [Int]
   ) {
@@ -16,16 +20,22 @@ export const FilteredCars = gql`
       fueltype: $fueltype
       color: $color
       transmission: $transmission
-      milage_max: $milageMax
-      milage_min: $milageMin
+      milage_min: $milage_min
+      milage_max: $milage_max
+      year_min: $year_min
+      year_max: $year_max
+      price_min: $price_min
+      price_max: $price_max
       doors: $doors
     ) {
       reg_number
+      year
       make
       model
       fueltype
       color
       doors
+      price
       milage
       transmission
     }

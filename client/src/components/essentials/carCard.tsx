@@ -15,12 +15,15 @@ export default function CarCard({
         <div className="imageview">Center</div>
         <div>Right</div>
       </div>
-      <h2>{carData.make}</h2>
+      <h4>{carData.make}</h4>
       <h4>{carData.model}</h4>
-      <div>{carData.milage}</div>
+      <h4> Year: {carData.year}</h4>
+      <h4>Milage: {carData.milage}</h4>
+
       <div>{carData.fueltype}</div>
       <div>{carData.transmission}</div>
       <div>{carData.color}</div>
+      <div>£{carData.price}</div>
       <div>
         {carData.ulez_compatible ? "ULEZ Compliant" : "Not ULEZ Compliant"}
       </div>

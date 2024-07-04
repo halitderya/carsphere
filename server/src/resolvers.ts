@@ -28,7 +28,10 @@ const resolvers = {
       {
         make,
         model,
-        year,
+        year_min,
+        year_max,
+        price_min,
+        price_max,
         fueltype,
         color,
         milage_min,
@@ -48,7 +51,10 @@ const resolvers = {
       }: {
         make?: string;
         model?: string;
-        year?: number;
+        year_min?: number;
+        year_max?: number;
+        price_min?: number;
+        price_max?: number;
         fueltype?: string[];
         color: string[];
         milage_min?: number;
@@ -71,7 +77,10 @@ const resolvers = {
 
       if (make) query.make = { $regex: new RegExp(make, "i") };
       if (model) query.model = { $regex: new RegExp(model, "i") };
-      if (year) query.year = year;
+      if (year_min) query.year = { ...query.year, $gte: year_min };
+      if (year_max) query.year = { ...query.year, $lte: year_max };
+      if (price_min) query.price = { ...query.price, $gte: price_min };
+      if (price_max) query.price = { ...query.price, $lte: price_max };
       if (fueltype) query.fueltype = { $in: fueltype };
       if (color) query.color = { $in: color };
       if (milage_min) query.milage = { $gte: milage_min };

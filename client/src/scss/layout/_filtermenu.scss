@@ -95,3 +95,14 @@
   justify-content: center;
   cursor: pointer;
 }
+.ranged-main {
+  align-items: flex-start;
+
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.ranged-single {
+  border: 1px red dotted;
+  width: 40%;
+}

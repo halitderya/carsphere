@@ -3,6 +3,8 @@ import { useLazyQuery } from "@apollo/client";
 import { FilteredCars } from "@/graphql/filter_cars";
 import ICarCard from "@/types/carCardType";
 import { ICarFilterType } from "@/types/carFilterType";
+import RangedFilter from "../elements/filtercomponents";
+import { calculator } from "@/util/calculator";
 
 export default function FilterMenu({
   active,
@@ -28,6 +30,7 @@ export default function FilterMenu({
   const [uniqueFuelType, setUniqueFuelType] = useState<string[]>([]);
   const [uniqueColour, setUniqueColour] = useState<string[]>([]);
   const [uniqueDoors, setUniqueDoors] = useState<number[]>([]);
+  const [uniqueMilage, setUniqueMilage] = useState<number[]>([]);
 
   const deleteProperty = (prop: keyof ICarFilterType, value: any) => {
     let newParams = { ...params };
@@ -77,37 +80,36 @@ export default function FilterMenu({
         )
       );
   }, [result]);
-  const calculator = (sender: string): any[] => {
-    let tempArray = allCars;
+  // const calculator = (sender: string): ICarCard[] => {
+  //   let tempArray = allCars;
 
-    Object.keys(params as ICarFilterType).forEach((paramkey) => {
-      if (sender !== paramkey.toString()) {
-        if (Array.isArray(params[paramkey as keyof ICarFilterType])) {
-          tempArray = tempArray.filter((car) =>
-            (params[paramkey as keyof ICarFilterType] as any[]).includes(
-              car[paramkey as keyof ICarFilterType]
-            )
-          );
-        } else {
-          tempArray = tempArray.filter(
-            (car) =>
-              car[paramkey as keyof ICarFilterType] ===
-              params[paramkey as keyof ICarFilterType]
-          );
-        }
-      } else {
-      }
-    });
+  //   Object.keys(params as ICarFilterType).forEach((paramkey) => {
+  //     if (sender !== paramkey.toString()) {
+  //       if (Array.isArray(params[paramkey as keyof ICarFilterType])) {
+  //         tempArray = tempArray.filter((car) =>
+  //           (params[paramkey as keyof ICarFilterType] as any[]).includes(
+  //             car[paramkey as keyof ICarCard]
+  //           )
+  //         );
+  //       } else {
+  //         tempArray = tempArray.filter(
+  //           (car) =>
+  //             car[paramkey as keyof ICarCard] ===
+  //             params[paramkey as keyof ICarFilterType]
+  //         );
+  //       }
+  //     } else {
+  //     }
+  //   });
 
-    return tempArray;
-  };
+  //   return tempArray;
+  // };
 
   async function handlefilterchange(e: SyntheticEvent) {
-    console.log(e);
-
     const target = e.target as HTMLInputElement;
 
     const { value, title } = e.target as HTMLInputElement;
+    console.log("handlefilterchange: ", title, value);
 
     if (target.type === "checkbox") {
       if (target.checked) {
@@ -137,6 +139,7 @@ export default function FilterMenu({
     } else {
       console.error("unknown target type: ", target.type);
     }
+    console.log("params: ", params);
   }
 
   useEffect(() => {
@@ -190,6 +193,11 @@ export default function FilterMenu({
           new Set(x.map((car: ICarCard) => car.doors))
         ) as number[]),
       ]);
+      setUniqueMilage([
+        ...(Array.from(
+          new Set(x.map((car: ICarCard) => car.milage))
+        ) as number[]),
+      ]);
     } else {
     }
   };
@@ -215,6 +223,7 @@ export default function FilterMenu({
                   >
                     <div className="filterbutton">X</div>
                     <div className="filtername">{a}</div>
+                    <div className="filtername">{x}</div>
                   </div>
                 ))
               ) : (
@@ -232,6 +241,7 @@ export default function FilterMenu({
                   </div>
                   <div className="filtername">
                     {params[x as keyof ICarFilterType]}
+                    <div className="filtername">{x}</div>
                   </div>
                 </div>
               )}
@@ -290,9 +300,12 @@ export default function FilterMenu({
             return uniqueTransmission.map((ut, index) => {
               const isChecked = params.transmission?.includes(ut) || false;
 
-              const filteredCars = calculator("transmission").filter(
-                (f) => f.transmission === ut
-              );
+              ///Here I want to replace all calculator functions with useCalculator hook.///
+              const filteredCars = calculator({
+                sender: "transmission",
+                params: params,
+                allCars: allCars,
+              }).filter((f) => f.transmission === ut);
 
               if (filteredCars.length === 0) {
                 return null;
@@ -324,9 +337,11 @@ export default function FilterMenu({
             return uniqueFuelType.map((uf, index) => {
               const isChecked = params.fueltype?.includes(uf) || false;
 
-              const filteredCars = calculator("fueltype").filter(
-                (f) => f.fueltype === uf
-              );
+              const filteredCars = calculator({
+                sender: "fueltype",
+                params: params,
+                allCars: allCars,
+              }).filter((f) => f.fueltype === uf);
 
               if (filteredCars.length === 0) {
                 return null;
@@ -358,9 +373,11 @@ export default function FilterMenu({
             return uniqueColour.map((uc, index) => {
               const isChecked = params.color?.includes(uc) || false;
 
-              const filteredCars = calculator("color").filter(
-                (f: ICarCard) => f.color === uc
-              );
+              const filteredCars = calculator({
+                sender: "color",
+                params: params,
+                allCars: allCars,
+              }).filter((f) => f.color === uc);
 
               if (filteredCars.length === 0) {
                 return null;
@@ -392,9 +409,11 @@ export default function FilterMenu({
             return uniqueDoors.map((ud, index) => {
               const isChecked = params.doors?.includes(ud) || false;
 
-              const filteredCars = calculator("doors").filter(
-                (f: ICarCard) => f.doors === ud
-              );
+              const filteredCars = calculator({
+                sender: "transmission",
+                params: params,
+                allCars: allCars,
+              }).filter((f) => f.doors === ud);
 
               if (filteredCars.length === 0) {
                 return null;
@@ -420,6 +439,27 @@ export default function FilterMenu({
             });
           })()}
         </div>
+        <h4>Milage</h4>
+        <RangedFilter
+          params={params}
+          setParams={setParams}
+          handleOnChange={handlefilterchange}
+          RangedFilterType="milage"
+        />
+        <h4>Price</h4>
+        <RangedFilter
+          params={params}
+          setParams={setParams}
+          handleOnChange={handlefilterchange}
+          RangedFilterType="price"
+        />
+        <h4>Year</h4>
+        <RangedFilter
+          params={params}
+          setParams={setParams}
+          handleOnChange={handlefilterchange}
+          RangedFilterType="year"
+        />
       </div>
     </div>
   );
