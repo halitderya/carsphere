@@ -3,7 +3,7 @@ import { useLazyQuery } from "@apollo/client";
 import { FilteredCars } from "@/graphql/filter_cars";
 import ICarCard from "@/types/carCardType";
 import { ICarFilterType } from "@/types/carFilterType";
-import RangedFilter from "../elements/filtercomponents";
+import { RangedFilter } from "../elements/filtercomponents";
 import { calculator } from "@/util/calculator";
 
 export default function FilterMenu({
@@ -441,6 +441,7 @@ export default function FilterMenu({
         </div>
         <h4>Milage</h4>
         <RangedFilter
+          allCars={allCars}
           params={params}
           setParams={setParams}
           handleOnChange={handlefilterchange}
@@ -448,6 +449,7 @@ export default function FilterMenu({
         />
         <h4>Price</h4>
         <RangedFilter
+          allCars={allCars}
           params={params}
           setParams={setParams}
           handleOnChange={handlefilterchange}
@@ -455,6 +457,7 @@ export default function FilterMenu({
         />
         <h4>Year</h4>
         <RangedFilter
+          allCars={allCars}
           params={params}
           setParams={setParams}
           handleOnChange={handlefilterchange}
