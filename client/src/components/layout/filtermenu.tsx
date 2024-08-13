@@ -3,7 +3,7 @@ import { useLazyQuery } from "@apollo/client";
 import { FilteredCars } from "@/graphql/filter_cars";
 import ICarCard from "@/types/carCardType";
 import { ICarFilterType } from "@/types/carFilterType";
-import { RangedFilter } from "../elements/filtercomponents";
+import { RangedFilter } from "../elements/rangedfilter";
 import { calculator } from "@/util/calculator";
 
 export default function FilterMenu({
@@ -109,7 +109,6 @@ export default function FilterMenu({
     const target = e.target as HTMLInputElement;
 
     const { value, title } = e.target as HTMLInputElement;
-    console.log("handlefilterchange: ", title, value);
 
     if (target.type === "checkbox") {
       if (target.checked) {
@@ -127,8 +126,8 @@ export default function FilterMenu({
       if (title && value) {
         title === "make" && setSelectedMake(value);
         title === "model" && setSelectedModel(value);
-        params = { ...params, [title]: value };
-        setParams(params);
+        const tempparams = { ...params, [title]: value };
+        setParams(tempparams);
       }
 
       addProperty(title as keyof ICarFilterType, value);
@@ -139,7 +138,6 @@ export default function FilterMenu({
     } else {
       console.error("unknown target type: ", target.type);
     }
-    console.log("params: ", params);
   }
 
   useEffect(() => {
@@ -260,8 +258,21 @@ export default function FilterMenu({
       </div>
 
       <div className="filterarea options">
+        <button
+          onClick={() => {
+            console.log(params);
+
+            // calculator({
+            //   sender: "fueltype",
+            //   params: params,
+            //   allCars: allCars,
+            // });
+          }}
+        >
+          My Button
+        </button>
         <h4>Make</h4>
-        <select id="make" value={selectedMake} onChange={handlefilterchange}>
+        <select title="make" value={selectedMake} onChange={handlefilterchange}>
           <option value="">All</option>
 
           {uniqueMakes.map((mk, index) => (
@@ -276,7 +287,7 @@ export default function FilterMenu({
         </select>
         {result && selectedMake && (
           <select
-            id="model"
+            title="model"
             value={selectedModel}
             onChange={handlefilterchange}
           >
@@ -346,6 +357,14 @@ export default function FilterMenu({
               if (filteredCars.length === 0) {
                 return null;
               }
+              // console.log(
+              //   "filteredcards:",
+              //   filteredCars,
+              //   "params:",
+              //   params,
+              //   "allCars:",
+              //   allCars
+              // );
 
               return (
                 <div key={index}>

@@ -77,14 +77,15 @@ const resolvers = {
 
       if (make) query.make = { $regex: new RegExp(make, "i") };
       if (model) query.model = { $regex: new RegExp(model, "i") };
+      if (milage_min) query.milage = { ...query.milage, $gte: milage_min };
+      if (milage_max) query.milage = { ...query.milage, $lte: milage_max };
       if (year_min) query.year = { ...query.year, $gte: year_min };
       if (year_max) query.year = { ...query.year, $lte: year_max };
       if (price_min) query.price = { ...query.price, $gte: price_min };
       if (price_max) query.price = { ...query.price, $lte: price_max };
       if (fueltype) query.fueltype = { $in: fueltype };
       if (color) query.color = { $in: color };
-      if (milage_min) query.milage = { $gte: milage_min };
-      if (milage_max) query.milage = { $lte: milage_max };
+
       if (transmission) query.transmission = { $in: transmission };
       if (engine_capacity_min)
         query.engine_capacity = {
