@@ -26,7 +26,6 @@ export default function Index() {
 
       setResult(x.data.filteredCars);
     });
-    console.log("params from useeffect", params);
   }, [params]);
 
   function handleCardClicked(e: any) {}

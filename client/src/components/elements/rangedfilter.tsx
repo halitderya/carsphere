@@ -32,7 +32,6 @@ export const RangedFilter: React.FC<RangedFilterProps> = ({
 
       allCars
     );
-    console.log("rangedValues: ", rangedValues);
 
     setMinRangedValues(rangedValues.minrangedvalues);
     setMaxRangedValues(rangedValues.maxrangedvalues);
@@ -63,22 +62,11 @@ export const RangedFilter: React.FC<RangedFilterProps> = ({
 
   const handleParamChage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setParams({ ...params, [e.target.title]: Number(e.target.value) });
-    console.log("params: ", params);
   };
 
   return (
     <>
-      <button
-        onClick={() => {
-          console.log(allCars);
-          console.log(
-            "rangedvalues",
-            rangedCreator(RangedFilterType as keyof ICarCard, allCars)
-          );
-        }}
-      >
-        params
-      </button>
+      <button onClick={() => {}}>params</button>
       <div className="ranged-main">
         <h5>Min</h5>
         <select
