@@ -58,6 +58,14 @@ export const calculator = ({
             );
           }
         }
+
+        if (!paramkey.includes("_min") && !paramkey.includes("_max")) {
+          tempArray = tempArray.filter(
+            (car) =>
+              car[paramkey as keyof ICarCard] ===
+              params[paramkey as keyof ICarFilterType]
+          );
+        }
       }
     }
   });
