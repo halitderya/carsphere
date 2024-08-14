@@ -5,6 +5,7 @@ import ICarCard from "@/types/carCardType";
 import { ICarFilterType } from "@/types/carFilterType";
 import { RangedFilter } from "../elements/rangedfilter";
 import { calculator } from "@/util/calculator";
+import FilterRemover from "../elements/filterremover";
 
 export default function FilterMenu({
   active,
@@ -207,45 +208,11 @@ export default function FilterMenu({
             reset here
           </div>
         )}
-        <div className="filterremover">
-          {Object.keys(params).map((x, index) => (
-            <Fragment key={index + x}>
-              {Array.isArray(params[x as keyof ICarFilterType]) ? (
-                (params[x as keyof ICarFilterType] as []).map((a, index2) => (
-                  <div
-                    className="singlefilter"
-                    onClick={() => {
-                      deleteProperty(x as keyof ICarFilterType, a);
-                    }}
-                    key={index2}
-                  >
-                    <div className="filterbutton">X</div>
-                    <div className="filtername">{a}</div>
-                    <div className="filtername">{x}</div>
-                  </div>
-                ))
-              ) : (
-                <div className="singlefilter">
-                  <div
-                    className="filterbutton"
-                    onClick={() => {
-                      deleteProperty(
-                        x as keyof ICarFilterType,
-                        params[x as keyof ICarFilterType]
-                      );
-                    }}
-                  >
-                    X
-                  </div>
-                  <div className="filtername">
-                    {params[x as keyof ICarFilterType]}
-                    <div className="filtername">{x}</div>
-                  </div>
-                </div>
-              )}
-            </Fragment>
-          ))}
-        </div>
+        <FilterRemover
+          params={params}
+          deleteProperty={deleteProperty}
+          setParams={setParams}
+        />
 
         <div
           className="closefilter"
@@ -272,7 +239,13 @@ export default function FilterMenu({
           My Button
         </button>
         <h4>Make</h4>
-        <select title="make" value={selectedMake} onChange={handlefilterchange}>
+        <select
+          title="make"
+          value={selectedMake}
+          onChange={async (e) => {
+            await handlefilterchange(e);
+          }}
+        >
           <option value="">All</option>
 
           {uniqueMakes.map((mk, index) => (
@@ -289,7 +262,9 @@ export default function FilterMenu({
           <select
             title="model"
             value={selectedModel}
-            onChange={handlefilterchange}
+            onChange={async (e) => {
+              await handlefilterchange(e);
+            }}
           >
             <option value="">All</option>
             {[
@@ -429,7 +404,7 @@ export default function FilterMenu({
               const isChecked = params.doors?.includes(ud) || false;
 
               const filteredCars = calculator({
-                sender: "transmission",
+                sender: "doors",
                 params: params,
                 allCars: allCars,
               }).filter((f) => f.doors === ud);
